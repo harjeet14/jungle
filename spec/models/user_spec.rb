@@ -10,12 +10,12 @@ RSpec.describe User, type: :model do
     it "should not create user without first name" do
       @user = User.new(last_name: "Kaur",email: "harjeetkaur.gmail.com",password: "Abc@123",password_confirmation: "Abc@123")
       @user.valid?
-     expect(@user.errors.full_messages).not_to include(/can't be blank/) 
+     expect(@user.errors.full_messages).to include(/First name can't be blank/) 
     end
     it "should not create user without last name" do
       @user = User.new(first_name:'Harjeet',email: "harjeetkaur.gmail.com",password: "Abc@123",password_confirmation: "Abc@123")
       @user.valid?
-     expect(@user.errors.full_messages).not_to include(/can't be blank/) 
+     expect(@user.errors.full_messages).to include(/can't be blank/) 
     end
     it "should not create user without password" do
       @user = User.new(first_name:'Harjeet',last_name: "Kaur",email: "harjeetkaur.gmail.com",password_confirmation: "Abc@123")
@@ -40,7 +40,7 @@ RSpec.describe User, type: :model do
     it "should not create user without email" do
       @user = User.new(first_name:'Harjeet',last_name: "Kaur",password: "Abc@123",password_confirmation: "Abc@123")
       @user.valid?
-     expect(@user.errors.full_messages).not_to include(/can't be blank/) 
+     expect(@user.errors.full_messages).to include(/can't be blank/) 
     end
     it "should not create user if email already exists" do
       @user1 = User.new(first_name:'Harjeet',last_name: "Kaur",email: "harjeetkaur.gmail.com",password: "Abc@123",password_confirmation: "Abc@123")
@@ -56,5 +56,14 @@ RSpec.describe User, type: :model do
       @user2.save
       expect(@user2.errors.full_messages).not_to include(/Email has already been taken/)
     end
+    
   end 
+  describe '.authenticate_with_credentials' do
+    it 'should authenticate user if email and password is correct' do
+      @user = User.new(first_name: "Harjeet", last_name: "Kaur", email: "harjeetkaur.gmail.com", password: "Abc@123", password_confirmation: "Abc@123")
+      @user.save
+      @findUser = User.authenticate_with_credentials("harjeetkaur.gmail.com", "Abc@123")
+      expect(@findUser).to be_present
+    end
+  end
 end
